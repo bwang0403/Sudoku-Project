@@ -99,3 +99,5 @@ class Board:
                 if len(set(box)) != 9:
                     return False
         return True
+
+delete commit change file
