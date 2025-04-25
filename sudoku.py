@@ -8,7 +8,7 @@ pygame.display.set_caption("Sudoku Game")
 font = pygame.font.Font(None, 40)
 clock = pygame.time.Clock()
 
-game_state = "start"  # "start", "playing", "win", "lose"
+game_state = "start"
 difficulty = None
 board = None
 
@@ -16,19 +16,15 @@ def draw_start_screen():
     screen.fill((255, 255, 255))
     title = font.render("Sudoku", True, (0, 0, 0))
     screen.blit(title, (240, 80))
-
     easy = pygame.Rect(200, 200, 200, 50)
     medium = pygame.Rect(200, 280, 200, 50)
     hard = pygame.Rect(200, 360, 200, 50)
-
     pygame.draw.rect(screen, (200, 200, 200), easy)
     pygame.draw.rect(screen, (200, 200, 200), medium)
     pygame.draw.rect(screen, (200, 200, 200), hard)
-
     screen.blit(font.render("Easy", True, (0, 0, 0)), (270, 210))
     screen.blit(font.render("Medium", True, (0, 0, 0)), (255, 290))
     screen.blit(font.render("Hard", True, (0, 0, 0)), (270, 370))
-
     return easy, medium, hard
 
 def draw_end_screen(win):
@@ -41,15 +37,12 @@ def draw_buttons():
     reset_btn = pygame.Rect(50, 610, 140, 50)
     restart_btn = pygame.Rect(230, 610, 140, 50)
     exit_btn = pygame.Rect(410, 610, 140, 50)
-
     pygame.draw.rect(screen, (220, 220, 220), reset_btn)
     pygame.draw.rect(screen, (220, 220, 220), restart_btn)
     pygame.draw.rect(screen, (220, 220, 220), exit_btn)
-
     screen.blit(font.render("Reset", True, (0, 0, 0)), (90, 625))
     screen.blit(font.render("Restart", True, (0, 0, 0)), (255, 625))
     screen.blit(font.render("Exit", True, (0, 0, 0)), (455, 625))
-
     return reset_btn, restart_btn, exit_btn
 
 running = True
@@ -109,13 +102,17 @@ while running:
                     board.sketch(event.key - pygame.K_0)
                 elif event.key == pygame.K_RETURN:
                     val = board.selected_cell.sketched_value
-                    board.place_number(val)
-
-                    if board.is_full():
-                        if board.check_board():
-                            game_state = "win"
+                    if val != 0:
+                        row, col = board.selected_cell.row, board.selected_cell.col
+                        if board.original_board[row][col] == 0 and board.generator.is_move_valid(row, col, val):
+                            board.place_number(val)
+                            if board.is_full():
+                                if board.check_board():
+                                    game_state = "win"
+                                else:
+                                    game_state = "lose"
                         else:
-                            game_state = "lose"
+                            print("❌ Invalid move")
                 elif event.key == pygame.K_BACKSPACE:
                     board.clear()
 
@@ -123,3 +120,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
