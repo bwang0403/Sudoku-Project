@@ -112,7 +112,7 @@ while running:
                                 else:
                                     game_state = "lose"
                         else:
-                            print("❌ Invalid move")
+                            print("Invalid move")
                 elif event.key == pygame.K_BACKSPACE:
                     board.clear()
 
@@ -120,4 +120,5 @@ while running:
 
 pygame.quit()
 sys.exit()
+
 
