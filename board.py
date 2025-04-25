@@ -103,4 +103,3 @@ class Board:
                 if len(set(box)) != 9:
                     return False
         return True
-
