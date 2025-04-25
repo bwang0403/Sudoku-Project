@@ -210,6 +210,13 @@ class SudokuGenerator:
         	if self.board[row][col] != 0:
             		self.board[row][col] = 0
             		count += 1
+    
+    def is_move_valid(self, row, col, num):
+	current = self.board[row][col]
+        self.board[row][col] = 0  # Temporarily clear to check validity
+        result = self.is_valid(row, col, num)
+        self.board[row][col] = current  # Restore original value
+        return result
 
 '''
 DO NOT CHANGE
