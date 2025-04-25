@@ -1,6 +1,6 @@
 import pygame
 from cell import Cell
-from sudoku_generator import generate_sudoku
+from sudoku_generator import generate_sudoku, SudokuGenerator
 
 class Board:
     def __init__(self, width, height, screen, difficulty):
@@ -19,7 +19,11 @@ class Board:
         else:
             removed = 40
 
-        self.original_board = generate_sudoku(9, removed)
+        self.generator = SudokuGenerator(9, removed)
+        self.generator.fill_values()
+        self.solution = [row[:] for row in self.generator.get_board()]
+        self.generator.remove_cells()
+        self.original_board = [row[:] for row in self.generator.get_board()]
         self.cells = [[Cell(self.original_board[row][col], row, col, screen) for col in range(9)] for row in range(9)]
 
     def draw(self):
@@ -27,7 +31,6 @@ class Board:
             line_width = 4 if i % 3 == 0 else 1
             pygame.draw.line(self.screen, (0, 0, 0), (0, i * 60), (540, i * 60), line_width)
             pygame.draw.line(self.screen, (0, 0, 0), (i * 60, 0), (i * 60, 540), line_width)
-
         for row in self.cells:
             for cell in row:
                 cell.draw()
@@ -55,8 +58,10 @@ class Board:
 
     def place_number(self, value):
         if self.selected_cell and self.selected_cell.value == 0:
-            self.selected_cell.set_cell_value(value)
-            self.selected_cell.set_sketched_value(0)
+            row, col = self.selected_cell.row, self.selected_cell.col
+            if self.generator.is_move_valid(row, col, value):
+                self.selected_cell.set_cell_value(value)
+                self.selected_cell.set_sketched_value(0)
 
     def reset_to_original(self):
         for row in range(9):
@@ -89,7 +94,6 @@ class Board:
             col = [self.board[r][i] for r in range(9)]
             if len(set(row)) != 9 or len(set(col)) != 9:
                 return False
-
         for i in range(0, 9, 3):
             for j in range(0, 9, 3):
                 box = []
@@ -99,3 +103,4 @@ class Board:
                 if len(set(box)) != 9:
                     return False
         return True
+
